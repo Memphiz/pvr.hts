@@ -30,13 +30,23 @@ ELSE(WIN32)
   FIND_PATH(XBMC_INCLUDE_DIR xbmc/xbmc_pvr_dll.h)
   FIND_PACKAGE(xbmcplatform REQUIRED)
   INCLUDE_DIRECTORIES(${xbmcplatform_INCLUDE_DIRS}
-                      ${XBMC_INCLUDE_DIR})
+                      ${XBMC_INCLUDE_DIR}
+                      ${PROJECT_SOURCE_DIR}/lib)
+  ADD_DEFINITIONS(-DTARGET_LINUX -DUSE_DEMUX)
 ENDIF(WIN32)
 
-SET(SOURCES src/client.cpp
-            src/PVRDemoData.cpp)
+SET(SOURCES src/CircBuffer.cpp
+            src/client.cpp
+            src/GUIDialogTranscode.cpp
+            src/HTSPConnection.cpp
+            src/HTSPData.cpp
+            src/HTSPDemux.cpp)
+
+ADD_SUBDIRECTORY(lib/libhts)
 
 ADD_LIBRARY(pvr.hts ${SOURCES})
+ADD_DEPENDENCIES(pvr.hts hts)
+
 IF(NOT WIN32)
   TARGET_LINK_LIBRARIES(pvr.hts ${xbmcplatform_LIBRARIES})
   set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-s")
